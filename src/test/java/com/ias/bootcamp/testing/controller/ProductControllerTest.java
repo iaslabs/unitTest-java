@@ -11,6 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -47,18 +49,17 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("Save product completed")
-    void saveProductFail() throws Exception {
-        //Preparación datos
+    @DisplayName("Get products ok")
+    void getProductsOk() throws Exception {
+        //Arrange
         Product product = new Product("Headphones", 500000, 1);
-        when(productService.saveProduct(any(Product.class))).thenReturn(product);
-        ObjectMapper mapper = new ObjectMapper();
+        when(productService.getProducts()).thenReturn(List.of(product));
 
 
-        //validación
-        this.mockMvc.perform(get("/api/product").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(product)))
+        //Act & Assert
+        this.mockMvc.perform(get("/api/product").contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isOk()).andExpect(content().string(containsString("Headphones")));
     }
 
 }
